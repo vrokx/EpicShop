@@ -1,58 +1,65 @@
-﻿//using EpicShopAPI.Data;
-//using EpicShopAPI.Models.DAL;
-//using EpicShopAPI.Models;
-//using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using EpicShopAPI.Models.DAL;
+using EpicShopAPI.Models;
+using EpicShopAPI.Data;
+using Microsoft.AspNetCore.Authentication;
 
-//namespace EpicShopAPI.Controllers
-//{
-//    [ApiController]
-//    [Route("api/[controller]")]
-//    public class LoginController : Controller
-//    {
-//        private readonly EpicShopApiDBContext _context;
-//        private readonly IAllRepo<UserModel> _userObj;
+namespace RepoPractice.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class LoginController : ControllerBase
+    {
+        private readonly IAllRepo<UserModel> _userObj;
+        private readonly EpicShopApiDBContext _db;
 
-//        public LoginController(IAllRepo<UserModel> userObj)
-//        {
-//            _userObj = userObj;
-//        }
+        public LoginController(IAllRepo<UserModel> userObj, EpicShopApiDBContext db)
+        {
+            _userObj = userObj;
+            _db = db;
+        }
+        [HttpPost("register")]
+        public async Task<ActionResult<UserModel>> Register(UserModel user)
+        {
+            await _userObj.Create(user);
+            return Ok(user);
+        }
 
-//        [HttpPost("Register")]
-//        public IActionResult Register(UserModel user)
-//        {
-//            _userObj.Create(user);
-//            return Ok(_userObj);
-//        }
+        [HttpPost("login")]
+        public async Task<ActionResult<UserModel>> Login(string email, string password)
+        {
+            var credentials = _db.UserSet.FirstOrDefault(x => x.Email == email && x.Password == password);
 
-//        [HttpPost("Login")]
-//        public async Task<ActionResult> Login(string email, string password, UserModel user)
-//        {
+            if (credentials != null)
+            {
+                List<UserModel> users = (await _userObj.GetAll()).ToList();
+                var userid = (from id in users where id.Email == email select id.UserId).ToList();
+                HttpContext.Session.SetInt32("UserId", userid[0]);
+                HttpContext.Session.SetString("userEmail", email);
+                HttpContext.Session.SetString("userPassword", password);
 
-//            var credentials = _context.UserSet.Where(x => x.Email == email && x.Password == password).FirstOrDefault();
+                var uid = HttpContext.Session.GetInt32("UserId");
 
-//            if (credentials != null)
-//            {
-//                var users = await _userObj.GetAll();
-//                var userid = from id in users where id.Email == email select id.UserId).ToList();
-//                HttpContext.Session.SetString("UserId", userid[0]);
-//                HttpContext.Session.SetString("userEmail", email);
-//                HttpContext.Session.SetString("userPassword", password);
+                if (email == "admin@admin.com" && password == "admin@123")
+                {
+                    return Ok(credentials);
+                }
+                else
+                {
+                    return Ok(credentials);
+                }
+            }
 
-//                var uid = (int)HttpContext.Session.GetString("UserId");
+            return BadRequest("Invalid login attempt.");
+        }
 
-//                if (email == "admin@admin.com" && password == "admin@123")
-//                {
-//                    FormsAuthentication.SetAuthCookie(email, false);
-//                    return RedirectToAction("DisplayAllProducts", "Seller");
-//                }
-//                else
-//                {
-//                    FormsAuthentication.SetAuthCookie(email, false);
-//                    return RedirectToAction("BuyerDisplayAllProduct", "Buyer", new { });
-//                }
-//            }
-//            return RedirectToAction("Login");
-//        }
-
-//    }
-//}
+        [Authorize]
+        [HttpPost("logout")]
+        public ActionResult Logout()
+        {
+            HttpContext.SignOutAsync("EpicShopAPI");
+            return Ok();
+        }
+    }
+}

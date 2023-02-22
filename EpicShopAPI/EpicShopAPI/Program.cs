@@ -1,5 +1,7 @@
 using EpicShopAPI.Data;
 using EpicShopAPI.Models.DAL;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +18,19 @@ builder.Services.AddDbContextPool<EpicShopApiDBContext>(options => options.UseSq
 builder.Services.AddTransient(typeof(IAllRepo<>),typeof(AllRepo<>));
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.Cookie.HttpOnly = true;
+                    options.ExpireTimeSpan = System.TimeSpan.FromMinutes(30);
+                    options.LoginPath = "/api/Login/Login";
+                    options.LogoutPath = "/api/Login/Logout";
+                });
+builder.Services.AddCors(options => options.AddPolicy(name: "EpicShopUI",
+    policy =>
+    {
+        policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
+    }));
 
 var app = builder.Build();
 
@@ -26,9 +41,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("EpicShopUI");
+
 app.UseSession();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
