@@ -39,8 +39,12 @@ namespace EpicShopAPI.Controllers
             {
                 return NotFound();
             }
-            await _productObj.Update(id, product);
-            return NoContent();
+            existingProduct.ProductName = product.ProductName;
+            existingProduct.Image = product.Image;
+            existingProduct.Price = product.Price;
+
+            await _productObj.Update(id, existingProduct);
+            return Ok(product);
         }
 
         [HttpDelete("DeleteProduct")]

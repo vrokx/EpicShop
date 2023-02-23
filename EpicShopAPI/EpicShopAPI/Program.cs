@@ -26,7 +26,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                     options.LoginPath = "/api/Login/Login";
                     options.LogoutPath = "/api/Login/Logout";
                 });
-builder.Services.AddCors(options => options.AddPolicy(name: "EpicShopUI",
+builder.Services.AddCors(options => options.AddPolicy(name: "EpicShop",
     policy =>
     {
         policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
@@ -41,7 +41,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("EpicShopUI");
+app.UseCors("EpicShop");
 
 app.UseSession();
 
