@@ -1,25 +1,15 @@
-<h2>Update Product</h2>
-
-<form>
-  <div class="form-group">
-    <label for="productId">Product ID</label>
-    <input type="number" class="form-control" id="productId" [(ngModel)]="productId" name="productId">
-  </div>
-
-  <div class="form-group">
-    <label for="productName">Product Name</label>
-    <input type="text" class="form-control" id="productName" [(ngModel)]="product.productName" name="productName">
-  </div>
-  
-  <div class="form-group">
-    <label for="image">Image</label>
-    <input type="text" class="form-control" id="image" [(ngModel)]="product.image" name="image">
-  </div>
-
-  <div class="form-group">
-    <label for="price">Price</label>
-    <input type="number" class="form-control" id="price" [(ngModel)]="product.price" name="price">
-  </div>
-  
-  <button type="button" class="btn btn-primary" (click)="updateProduct()">Update</button>
-</form>
+<form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="productName">Product Name:</label>
+      <input type="text" class="form-control" id="productName" formControlName="productName" required>
+    </div>
+    <div class="form-group">
+      <label for="image">Image URL:</label>
+      <input type="text" class="form-control" id="image" formControlName="image" required>
+    </div>
+    <div class="form-group">
+      <label for="price">Price:</label>
+      <input type="number" class="form-control" id="price" formControlName="price" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Update Product</button>
+  </form>  

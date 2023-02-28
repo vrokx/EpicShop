@@ -1,0 +1,20 @@
+<div class="w-100 h-100">
+<form class="card border-secondary p-0 mt-5 mb-3 container align-self-center d-flex justify-content-center" style="max-width: 30rem;" (ngSubmit)="onSubmit()">
+    <h1 class="card-header">Update Product</h1>
+    <div>
+    <br>
+      <label class="ms-3">Product Name : </label>
+      <input [(ngModel)]="product.productName" name="productName" required>
+    </div><br>
+    <div>
+      <label class="ms-3">Image : </label>
+      <input [(ngModel)]="product.image" name="image" required>
+    </div><br>
+    <div>
+      <label class="ms-3">Price : </label>
+      <input [(ngModel)]="product.price" name="price" required>
+    </div><br>
+    <button class="btn btn-primary" type="submit">Save</button>
+    <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+  </form>
+</div>  

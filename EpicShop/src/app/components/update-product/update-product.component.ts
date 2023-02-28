@@ -1,24 +1,32 @@
-import { Component } from '@angular/core';
-import { Product } from 'src/app/models/product';
-import { updateProductService } from 'src/app/services/update-product.service';
-import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
+import { Component, Input } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { AllProductsService } from 'src/app/services/all-products.service';
 
 @Component({
-  selector: 'app-product-update',
+  selector: 'app-update-product',
   templateUrl: './update-product.component.html',
   styleUrls: ['./update-product.component.css']
 })
 export class UpdateProductComponent {
+  @Input() productId: number = 0;
 
-  productId: number = 0;
-  product: Product = new Product();
+  productForm: FormGroup = this.formBuilder.group({
+    productName: '',
+    image: '',
+    price: '',
+  });
 
-  constructor(private productService: updateProductService) { }
+  constructor(
+    private formBuilder: FormBuilder,
+    private productListService: AllProductsService
+  ) {}
 
-  updateProduct(): void {
-    this.productService.updateProduct(this.productId, this.product)
-      .subscribe(() => this.goBack());
+  onSubmit(): void {
+    const updatedProduct = {
+      productName: this.productForm.value.productName,
+      image: this.productForm.value.image,
+      price: this.productForm.value.price,
+    };
+    this.productListService.updateProduct(this.productId, updatedProduct).subscribe();
   }
-  
 }

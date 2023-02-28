@@ -6,23 +6,26 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {AllProductsComponent} from './components/all-products/all-products.component';
 import { AllProductsService } from './services/all-products.service';
-import { AddProductsComponent } from './components/add-products/add-products.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { UpdateProductComponent } from './components/update-product/update-product.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AllProductsComponent,
-    AddProductsComponent,
-    UpdateProductComponent
+    UpdateProductComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     CommonModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule.forRoot([ // <-- add Router Module to imports array
+      { path: '', component: AllProductsComponent },
+    ])
   ],
   providers: [
     AllProductsService,

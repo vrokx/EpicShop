@@ -1,0 +1,19 @@
+<div class="container mt-5">
+    <form #addProductForm="ngForm" (ngSubmit)="addProduct()">
+      <div class="form-group">
+        <label for="productName">Product Name</label>
+        <input type="text" class="form-control" id="productName" name="productName" [(ngModel)]="product.productName" required>
+      </div>
+      <div class="form-group">
+        <label for="price">Price</label>
+        <input type="number" class="form-control" id="price" name="price" [(ngModel)]="product.price" required>
+      </div>
+      <div class="form-group">
+        <label for="image">Image</label>
+        <input type="text" class="form-control" id="image" name="image" [(ngModel)]="product.image" required>
+      </div>
+      <button type="submit" class="btn btn-primary mr-2" [disabled]="!addProductForm.valid">Add Product</button>
+      <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+    </form>
+  </div>
+  

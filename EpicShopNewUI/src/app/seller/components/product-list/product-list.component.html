@@ -1,0 +1,16 @@
+<div >
+  <table>
+    <tbody >
+      <tr class="card border-secondary ms-5 mt-5 me-5" style="max-width: 20rem;display: inline-block;" *ngFor="let product of products; let last = last">
+        <td class="card-header">{{ product.productName }}</td><br>
+        <td >{{ product.image }}</td><br>
+        <td class="card-text">Price : {{ product.price }}.00 RS/-</td><br>
+        <td>
+          <button class="btn btn-primary ms-3 mb-3" (click)="editProduct(product)">Edit</button>
+          <button class="btn btn-danger ms-3 me-3 mb-3" (click)="deleteProduct(product)">Delete</button>
+          <button class="btn btn-success" *ngIf="last" (click)="addProduct(product)">Add</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

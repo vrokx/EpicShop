@@ -24,6 +24,14 @@ namespace EpicShopAPI.Controllers
             return Ok(products);
         }
 
+        [HttpGet("GetById")]
+        public async Task<IActionResult> GetById(int productId)
+        {
+            var product = await _productObj.GetById(productId);
+            return Ok(product);
+        }
+
+
         [HttpPost("AddProduct")]
         public async Task<IActionResult> Create(ProductModel product)
         {
