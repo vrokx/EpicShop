@@ -27,11 +27,11 @@ export class DeleteProductComponent implements OnInit {
 
   deleteProduct(): void {
     this.productService.deleteProduct(this.product.productId).subscribe(() => {
-      this.router.navigate(['']); // navigate back to product list after deleting
+      this.router.navigate(['/seller/product-list']); // navigate back to product list after deleting
     });
   }
 
   onCancel(): void {
-    this.router.navigate(['/']); // navigate back to product list without deleting
+    this.router.navigate(['/seller/product-list']); // navigate back to product list without deleting
   }
 }

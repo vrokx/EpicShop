@@ -9,6 +9,11 @@ import { UpdateProductComponent } from './seller/components/update-product/updat
 import { FormsModule } from '@angular/forms';
 import { DeleteProductComponent } from './seller/components/delete-product/delete-product.component';
 import { AddProductComponent } from './seller/components/add-product/add-product.component';
+import { BuyerProductListedComponent } from './buyer/components/buyer-product-list/buyer-product-list.component';
+import { ViewCartComponent } from './buyer/components/view-cart/view-cart.component';
+import { WalletComponent } from './buyer/components/wallet/wallet.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NavbarUserComponent } from './buyer/components/navbar-user/navbar-user.component';
 
 @NgModule({
   declarations: [
@@ -16,13 +21,18 @@ import { AddProductComponent } from './seller/components/add-product/add-product
     ProductListComponent,
     UpdateProductComponent,
     DeleteProductComponent,
-    AddProductComponent
+    AddProductComponent,
+    BuyerProductListedComponent,
+    ViewCartComponent,
+    WalletComponent,
+    NavbarUserComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     ProductListService

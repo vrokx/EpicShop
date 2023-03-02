@@ -2,6 +2,7 @@
 using EpicShopAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using EpicShopAPI.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EpicShopAPI.Controllers
 {

@@ -1,0 +1,17 @@
+<h2>My Wallet</h2>
+<p>Current balance: {{ wallet.currentBalance }}</p>
+
+<form [formGroup]="addBalanceForm" (ngSubmit)="addBalance()">
+  <div class="form-group">
+    <label for="amount">Amount:</label>
+    <input type="number" class="form-control" formControlName="amount" id="amount">
+    <div *ngIf="addBalanceForm.controls['amount'].touched && addBalanceForm.controls['amount'].hasError('required')"
+         class="invalid-feedback">Amount is required.
+    </div>
+    <div *ngIf="addBalanceForm.controls['amount'].touched && addBalanceForm.controls['amount'].hasError('required')"
+         class="invalid-feedback">Amount must be at least 1.
+    </div>
+  </div>
+
+  <button class="btn btn-primary" type="submit">Add Balance</button>
+</form>

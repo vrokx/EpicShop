@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
+using EpicShopAPI.Models.DTO;
 
 namespace EpicShopAPI.Controllers
 {
@@ -25,7 +26,9 @@ namespace EpicShopAPI.Controllers
         private readonly IAllRepo<RoleModel> _roleObj;
         private readonly IAllRepo<WalletModel> _walletObj;
 
-        public BuyerController(IAllRepo<ProductModel> productObj, IAllRepo<UserModel> userObj, IAllRepo<CartModel> cartObj, IAllRepo<CategoryModel> categoryObj, IAllRepo<OrderModel> orderObj, IAllRepo<PreviousOrdersModel> previousOrdersObj, IAllRepo<RoleModel> roleObj, IAllRepo<WalletModel> walletObj, ILogger<BuyerController> logger)
+        private static readonly object _dbContextLock = new object();
+
+        public BuyerController(IAllRepo<ProductModel> productObj, IAllRepo<UserModel> userObj, IAllRepo<CartModel> cartObj, IAllRepo<CategoryModel> categoryObj, IAllRepo<OrderModel> orderObj, IAllRepo<PreviousOrdersModel> previousOrdersObj, IAllRepo<RoleModel> roleObj, IAllRepo<WalletModel> walletObj, ILogger<BuyerController> logger, EpicShopApiDBContext context)
         {
             this._productObj = productObj;
             this._userObj = userObj;
@@ -36,6 +39,7 @@ namespace EpicShopAPI.Controllers
             this._roleObj = roleObj;
             this._walletObj = walletObj;
             _logger = logger;
+            _context = context;
         }
 
         [HttpGet("BuyerDisplayAllProduct")]
@@ -52,11 +56,54 @@ namespace EpicShopAPI.Controllers
             }
         }
 
+        //[HttpPost("CheckCartItem")]
+        //public async Task<IActionResult> CheckCartItem(int productId, int qty)
+        //{
+        //    try
+        //    {
+
+        //        var product = _productObj.GetById(productId);
+
+        //        // Get all the cart items from the database
+        //        List<CartModel> cartItemsInDb;
+        //        lock (_dbContextLock)
+        //        {
+        //            cartItemsInDb = Task.Run(() => _cartObj.GetAll()).Result.ToList();
+        //        }
+
+        //        // Find the cart item with the matching product name
+        //        var matchingCartItem = cartItemsInDb.FirstOrDefault(c => c.productname == product.Result.ProductName);
+
+        //        if (matchingCartItem == null)
+        //        {
+        //            // Return the matching cart item
+        //            return Ok(matchingCartItem);
+        //        }
+        //        else
+        //        {
+        //            // Return a not found response
+        //            return NotFound("Product not found in cart");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log the exception message
+        //        _logger.LogError(ex, "An error occurred while checking cart item");
+
+        //        // Get the inner exception message for more details
+        //        var innerExceptionMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+
+        //        return StatusCode(500, $"An error occurred while checking cart item: {innerExceptionMessage}");
+        //    }
+        //}
+
+
         [HttpPost("AddToCart")]
-        public async Task<IActionResult> AddToCart(int productId,int qty ,[FromBody] CartModel cartItem)
+        public async Task<IActionResult> AddToCart(int productId, int qty, [FromBody] CartModel cartItem)
         {
             try
             {
+
                 // Get the product from the database
                 var product = _productObj.GetById(productId);
                 if (product == null)
@@ -66,7 +113,7 @@ namespace EpicShopAPI.Controllers
 
                 // Set the properties of the cart item
                 cartItem.productname = product.Result.ProductName;
-                cartItem.ProductModel_ProductId = product.Result.ProductId;
+                cartItem.ProductModel_ProductId = productId;
                 cartItem.price = (int)product.Result.Price;
                 cartItem.TotalAmount = cartItem.price * qty;
                 cartItem.Quantity = qty;
@@ -87,6 +134,7 @@ namespace EpicShopAPI.Controllers
                 return StatusCode(500, $"An error occurred while saving the cart item: {innerExceptionMessage}");
             }
         }
+
         [HttpDelete("RemoveCart")]
         public async Task<IActionResult> RemoveCart(int cartId)
         {
@@ -96,17 +144,17 @@ namespace EpicShopAPI.Controllers
 
                 if (cartItem == null)
                 {
-                    return NotFound($"Cart item with ID {cartId} not found");
+                    return NotFound(new { message = $"Cart item with ID {cartId} not found" });
                 }
 
                 await _cartObj.Delete(cartId);
 
-                return Ok($"Cart item with ID {cartId} has been removed");
+                return Ok(new { message = $"Cart item with ID {cartId} has been removed" });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while removing the cart item");
-                return StatusCode(500, "An error occurred while removing the cart item");
+                return StatusCode(500, new { message = "An error occurred while removing the cart item" });
             }
         }
 
@@ -159,13 +207,10 @@ namespace EpicShopAPI.Controllers
         }
 
         [HttpPost("wallet")]
-        public async Task<IActionResult> CreateOrRetrieveWalletAsync()
+        public async Task<IActionResult> CreateOrRetrieveWalletAsync(int userId)
         {
             try
             {
-                // Get the user ID from the authenticated user's claims
-                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-
                 // Check if the user already has a wallet
                 var wallet = await _context.WalletSet.FirstOrDefaultAsync(w => w.UserModel_UserId == userId);
 
@@ -195,40 +240,35 @@ namespace EpicShopAPI.Controllers
             }
         }
 
+        [HttpPost("wallet/addbalance")]
+        public async Task<IActionResult> AddBalanceAsync([FromBody] AddBalanceDto addBalanceDto)
+        {
+            try
+            {
+                var userId = addBalanceDto.UserId;
+                var amount = addBalanceDto.Amount;
 
-        //[HttpPost("AddBalance")]
-        //public async Task<IActionResult> AddBalance()
-        //{
-        //    try
-        //    {
-        //        var id = (int)HttpContext.Session.GetInt32("UserId");
+                // Retrieve the user's wallet
+                var wallet = await _context.WalletSet.FirstOrDefaultAsync(w => w.UserModel_UserId == userId);
 
-        //        var credentials = await _walletObj.GetAll();
-        //        var wallet = credentials.FirstOrDefault();
+                if (wallet == null)
+                {
+                    return NotFound();
+                }
 
-        //        return View(wallet);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Content(ex.Message);
-        //    }
-        //}
+                // Add the balance to the wallet
+                wallet.CurrentBalance += amount;
+                _context.WalletSet.Update(wallet);
+                await _context.SaveChangesAsync();
 
-        //[HttpPost("AddBalance")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> AddBalance(WalletModel collection)
-        //{
-        //    try
-        //    {
-        //        await _walletObj.Update((int)HttpContext.Session.GetInt32("UserId"), collection);
-
-        //        return RedirectToAction("Checkout");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Content(ex.Message);
-        //    }
-        //}
-
+                // Return the updated wallet
+                return Ok(wallet);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding balance to wallet");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }

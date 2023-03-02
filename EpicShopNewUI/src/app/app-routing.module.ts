@@ -4,9 +4,15 @@ import { AddProductComponent } from './seller/components/add-product/add-product
 import { DeleteProductComponent } from './seller/components/delete-product/delete-product.component';
 import { ProductListComponent } from './seller/components/product-list/product-list.component';
 import { UpdateProductComponent } from './seller/components/update-product/update-product.component';
+import { BuyerProductListedComponent } from './buyer/components/buyer-product-list/buyer-product-list.component';
+import { ViewCartComponent } from './buyer/components/view-cart/view-cart.component';
+import { WalletComponent } from './buyer/components/wallet/wallet.component';
 
 const routes: Routes = [
-  { path: '', component: ProductListComponent },
+  {path : '', component: BuyerProductListedComponent},
+  {path : 'view-cart', component: ViewCartComponent},
+  {path : 'wallet', component: WalletComponent},
+  {path: 'seller/product-list', component: ProductListComponent },
   {path : 'update-product/:id', component: UpdateProductComponent},
   {path : 'delete-product/:id', component: DeleteProductComponent},
   {path : 'add-product', component: AddProductComponent}

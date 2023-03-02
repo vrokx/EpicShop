@@ -16,6 +16,10 @@ builder.Services.AddDbContextPool<EpicShopApiDBContext>(options => options.UseSq
         builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 builder.Services.AddTransient(typeof(IAllRepo<>),typeof(AllRepo<>));
+builder.Services.AddScoped<EpicShopApiDBContext>(provider => {
+    var options = provider.GetService<DbContextOptions<EpicShopApiDBContext>>();
+    return new EpicShopApiDBContext(options);
+});
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

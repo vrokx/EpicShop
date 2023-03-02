@@ -14,7 +14,6 @@ namespace EpicShopAPI.Models
 
         [ForeignKey("UserModel")]
         public int UserModel_UserId { get; set; }
-
         public UserModel UserModel { get; set; }
 
         public CartModel CartModel { get; set; }

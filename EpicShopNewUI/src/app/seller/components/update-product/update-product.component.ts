@@ -28,18 +28,18 @@ export class UpdateProductComponent implements OnInit {
   updateProduct(): void {
     let updatedProduct: Products = { ...this.product }; // create a copy of the product
     this.productService.updateProduct(updatedProduct.productId, updatedProduct).subscribe(() => {
-      this.router.navigate(['/']); // navigate back to product list after updating
+      this.router.navigate(['/seller/product-list']); // navigate back to product list after updating
     });
   }
 
   onCancel(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['/seller/product-list']);
   }
 
   onSubmit(): void {
     const updatedProduct: Products = { ...this.product };
     this.productService.updateProduct(this.product.productId, updatedProduct).subscribe(() => {
-      this.router.navigate(['/']);
+      this.router.navigate(['/seller/product-list']);
     });
   }
 }

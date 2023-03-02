@@ -26,5 +26,6 @@ namespace EpicShopAPI.Models
         public string Password { get; set; }
 
         public virtual RoleModel RoleModel { get; set; }
+
     }
 }
