@@ -4,15 +4,15 @@
     <div>
     <br>
       <label class="ms-3">Product Name : </label>
-      <input [(ngModel)]="product.productName" name="productName" required>
+      <input class="form-control me-sm-2" [(ngModel)]="product.productName" name="productName" required>
     </div><br>
     <div>
       <label class="ms-3">Image : </label>
-      <input [(ngModel)]="product.image" name="image" required>
+      <input class="form-control me-sm-2" [(ngModel)]="product.image" name="image" required>
     </div><br>
     <div>
       <label class="ms-3">Price : </label>
-      <input [(ngModel)]="product.price" name="price" required>
+      <input class="form-control me-sm-2" [(ngModel)]="product.price" name="price" required>
     </div><br>
     <button class="btn btn-primary" type="submit">Save</button>
     <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>

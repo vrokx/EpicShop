@@ -1,13 +1,12 @@
 ﻿using EpicShopAPI.Data;
 using EpicShopAPI.Models;
 using EpicShopAPI.Models.DAL;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.CodeAnalysis;
-using System.Security.Claims;
 using EpicShopAPI.Models.DTO;
+using Azure.Messaging;
+using System.Net.Mail;
+using System.Net;
 
 namespace EpicShopAPI.Controllers
 {
@@ -20,24 +19,12 @@ namespace EpicShopAPI.Controllers
         private readonly IAllRepo<ProductModel> _productObj;
         private readonly IAllRepo<UserModel> _userObj;
         private readonly IAllRepo<CartModel> _cartObj;
-        private readonly IAllRepo<CategoryModel> _categoryObj;
-        private readonly IAllRepo<OrderModel> _orderObj;
-        private readonly IAllRepo<PreviousOrdersModel> _previousOrdersObj;
-        private readonly IAllRepo<RoleModel> _roleObj;
-        private readonly IAllRepo<WalletModel> _walletObj;
 
-        private static readonly object _dbContextLock = new object();
-
-        public BuyerController(IAllRepo<ProductModel> productObj, IAllRepo<UserModel> userObj, IAllRepo<CartModel> cartObj, IAllRepo<CategoryModel> categoryObj, IAllRepo<OrderModel> orderObj, IAllRepo<PreviousOrdersModel> previousOrdersObj, IAllRepo<RoleModel> roleObj, IAllRepo<WalletModel> walletObj, ILogger<BuyerController> logger, EpicShopApiDBContext context)
+        public BuyerController(IAllRepo<ProductModel> productObj, IAllRepo<UserModel> userObj, IAllRepo<CartModel> cartObj, ILogger<BuyerController> logger, EpicShopApiDBContext context)
         {
             this._productObj = productObj;
             this._userObj = userObj;
             this._cartObj = cartObj;
-            this._categoryObj = categoryObj;
-            this._orderObj = orderObj;
-            this._previousOrdersObj = previousOrdersObj;
-            this._roleObj = roleObj;
-            this._walletObj = walletObj;
             _logger = logger;
             _context = context;
         }
@@ -55,47 +42,6 @@ namespace EpicShopAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        //[HttpPost("CheckCartItem")]
-        //public async Task<IActionResult> CheckCartItem(int productId, int qty)
-        //{
-        //    try
-        //    {
-
-        //        var product = _productObj.GetById(productId);
-
-        //        // Get all the cart items from the database
-        //        List<CartModel> cartItemsInDb;
-        //        lock (_dbContextLock)
-        //        {
-        //            cartItemsInDb = Task.Run(() => _cartObj.GetAll()).Result.ToList();
-        //        }
-
-        //        // Find the cart item with the matching product name
-        //        var matchingCartItem = cartItemsInDb.FirstOrDefault(c => c.productname == product.Result.ProductName);
-
-        //        if (matchingCartItem == null)
-        //        {
-        //            // Return the matching cart item
-        //            return Ok(matchingCartItem);
-        //        }
-        //        else
-        //        {
-        //            // Return a not found response
-        //            return NotFound("Product not found in cart");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Log the exception message
-        //        _logger.LogError(ex, "An error occurred while checking cart item");
-
-        //        // Get the inner exception message for more details
-        //        var innerExceptionMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-
-        //        return StatusCode(500, $"An error occurred while checking cart item: {innerExceptionMessage}");
-        //    }
-        //}
 
 
         [HttpPost("AddToCart")]
@@ -255,14 +201,22 @@ namespace EpicShopAPI.Controllers
                 {
                     return NotFound();
                 }
+                if(amount > 0)
+                {
+                    wallet.CurrentBalance += amount;
+                    _context.WalletSet.Update(wallet);
+                    await _context.SaveChangesAsync();
 
+                    return Ok(wallet);
+                }
                 // Add the balance to the wallet
-                wallet.CurrentBalance += amount;
-                _context.WalletSet.Update(wallet);
-                await _context.SaveChangesAsync();
+                else
+                {
+                    return BadRequest("Enter Amount Greater Then 0");
+                }
 
                 // Return the updated wallet
-                return Ok(wallet);
+                
             }
             catch (Exception ex)
             {
@@ -270,5 +224,105 @@ namespace EpicShopAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        [HttpPost("PaymentMode")]
+        public async Task<IActionResult> PaymentMode(string mode, int grandTotal, OrderModel order)
+        {
+            try {
+                if (mode == "wallet")
+                {
+                    var userId = 2;
+
+                    var wallet = await _context.WalletSet.FirstOrDefaultAsync(w => w.UserModel_UserId == userId);
+                    wallet.CurrentBalance -= grandTotal;
+                    _context.WalletSet.Update(wallet);
+                    await _context.SaveChangesAsync();
+
+                    order.OrderDate = DateTime.Now;
+                    order.ModeOfPayment = mode;
+                    order.OrderStatus = "Confirmed";
+                    order.AmountPaid = grandTotal;
+                    _context.OrderSet.Update(order);
+                    await _context.SaveChangesAsync();
+
+                    return Ok(order);
+                }
+                else
+                {
+                    order.OrderDate = DateTime.Now;
+                    order.ModeOfPayment = mode;
+                    order.OrderStatus = "Confirmed";
+                    order.AmountPaid = 0;
+                    _context.OrderSet.Update(order);
+                    await _context.SaveChangesAsync();
+
+                    return Ok(order);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while saving the cart item");
+
+                // Get the inner exception message for more details
+                var innerExceptionMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+
+                return StatusCode(500, $"An error occurred while placing order: {innerExceptionMessage}");
+            }
+        }
+
+        [HttpGet("OrderDetails")]
+        public async Task<IActionResult> OrderDetails()
+        {
+            try
+            {
+                var order = await _context.OrderSet.OrderBy(i => i.OrderId).LastOrDefaultAsync();
+                return Ok(order);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while saving the cart item");
+
+                // Get the inner exception message for more details
+                var innerExceptionMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+
+                return StatusCode(500, $"An error occurred while placing order: {innerExceptionMessage}");
+            }
+        }
+
+        [HttpPost("sendEmail")]
+        public async Task<IActionResult> SendEmail(int userId)
+        {
+            try
+            {
+                var order = await _context.OrderSet.OrderBy(i => i.OrderId).LastOrDefaultAsync();
+
+                MailMessage mm = new MailMessage("radhakrishna36495@gmail.com", "vaibhavraval9819@gmail.com");
+                mm.Subject = $"Order details for your Order id : {order.OrderId}";
+                mm.Body = $"Order id : {order.OrderId},\n Order Date : {order.OrderDate},\n Amount Paid : {order.AmountPaid},\n Mode Of Payment : {order.ModeOfPayment},\n Order Status : {order.OrderStatus}";
+                mm.IsBodyHtml = false;
+                SmtpClient smtp = new SmtpClient();
+                smtp.Host = "smtp.gmail.com";
+                smtp.Port = 587;
+                smtp.EnableSsl = true;
+
+
+                NetworkCredential nc = new NetworkCredential("radhakrishna36495@gmail.com", "iufedzbfhqlpypdl");
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = nc;
+                smtp.Send(mm);
+
+                return Ok(order);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while saving the cart item");
+
+                // Get the inner exception message for more details
+                var innerExceptionMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+
+                return StatusCode(500, $"An error occurred while placing order: {innerExceptionMessage}");
+            }
+        }
+
     }
 }

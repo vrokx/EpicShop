@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CartModel } from 'src/app/models/cart-model';
+import { Order } from 'src/app/models/orders';
 import { Products } from 'src/app/models/products';
 import { WalletModel } from 'src/app/models/wallet-model';
 
@@ -9,6 +10,7 @@ import { WalletModel } from 'src/app/models/wallet-model';
   providedIn: 'root'
 })
 export class BuyerProductListService {
+  public grandTotal: number = 0;
 
   private url = 'https://localhost:7277/api/Buyer';
 
@@ -42,4 +44,17 @@ export class BuyerProductListService {
     const addBalanceDto = { userId, amount };
     return this.http.post<WalletModel>(`${this.url}/wallet/addbalance`, addBalanceDto);
   }
+  placeOrder(mode: string, grandTotal: number, order: Order): Observable<Order> {
+    const url = `${this.url}/PaymentMode?mode=${mode}&grandTotal=${grandTotal}`;
+    return this.http.post<Order>(url, order);
+  }
+  showOrder(): Observable<Order>{
+    const url = `${this.url}/OrderDetails`;
+    return this.http.get<Order>(url);
+  }
+
+  sendEmail(userId: number): Observable<any> {
+    return this.http.post<any>(`${this.url}/sendEmail?userId=${userId}`, {});
+  }
+  
 }

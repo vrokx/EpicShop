@@ -18,7 +18,5 @@ namespace EpicShopAPI.Models
 
         [Required]
         public string OrderStatus { get; set; }
-
-        public CartModel CartModel { get; set; }
     }
 }

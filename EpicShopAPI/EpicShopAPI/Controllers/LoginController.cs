@@ -1,65 +1,99 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using EpicShopAPI.Models.DAL;
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using AutoMapper;
 using EpicShopAPI.Models;
-using EpicShopAPI.Data;
-using Microsoft.AspNetCore.Authentication;
+using EpicShopAPI.Models.DTO;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
-namespace RepoPractice.Controllers
+namespace EpicShopAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class LoginController : ControllerBase
+    public class AuthController : ControllerBase
     {
-        private readonly IAllRepo<UserModel> _userObj;
-        private readonly EpicShopApiDBContext _db;
+        private readonly IMapper _mapper;
+        private readonly IUserService _userService;
+        private readonly IConfiguration _configuration;
 
-        public LoginController(IAllRepo<UserModel> userObj, EpicShopApiDBContext db)
+        public AuthController(IMapper mapper,IUserService userService, IConfiguration configuration)
         {
-            _userObj = userObj;
-            _db = db;
+            _mapper = mapper;
+            _userService = userService;
+            _configuration = configuration;
         }
+
+        [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult<UserModel>> Register(UserModel user)
+        public async Task<IActionResult> Register(UserDto userDto)
         {
-            await _userObj.Create(user);
-            return Ok(user);
+            try
+            {
+                var user = _mapper.Map<UserModel>(userDto);
+
+                return Ok(new { UserId = user.UserId, message = "User registered successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult<UserModel>> Login(string email, string password)
+        public async Task<IActionResult> Login(UserDto loginDto)
         {
-            var credentials = _db.UserSet.FirstOrDefault(x => x.Email == email && x.Password == password);
-
-            if (credentials != null)
+            try
             {
-                List<UserModel> users = (await _userObj.GetAll()).ToList();
-                var userid = (from id in users where id.Email == email select id.UserId).ToList();
-                HttpContext.Session.SetInt32("UserId", userid[0]);
-                HttpContext.Session.SetString("userEmail", email);
-                HttpContext.Session.SetString("userPassword", password);
 
-                var uid = HttpContext.Session.GetInt32("UserId");
+                var user = await _userService.Login(loginDto.Email, loginDto.Password);
 
-                if (email == "admin@admin.com" && password == "admin@123")
+                if (user == null)
+                    return BadRequest("Invalid email or password.");
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(_configuration.GetSection("JwtConfig:Secret").Value);
+                var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    return Ok(credentials);
-                }
-                else
-                {
-                    return Ok(credentials);
-                }
+                    Subject = new ClaimsIdentity(new Claim[]
+                    {
+                        new Claim("UserId", user.UserId.ToString()),
+                        new Claim(ClaimTypes.Role, user.Role)
+                    }),
+                    Expires = DateTime.UtcNow.AddMinutes(int.Parse(_configuration.GetSection("JwtConfig:ExpirationInMinutes").Value)),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+
+                return Ok(new { token = tokenHandler.WriteToken(token) });
             }
-
-            return BadRequest("Invalid login attempt.");
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]
         [HttpPost("logout")]
-        public ActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.SignOutAsync("EpicShopAPI");
-            return Ok();
+            try
+            {
+                var userId = int.Parse(User.FindFirstValue("UserId"));
+                await _userService.Logout(userId);
+
+                return Ok("User logged out successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

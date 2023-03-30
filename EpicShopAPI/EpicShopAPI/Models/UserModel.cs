@@ -8,7 +8,7 @@ namespace EpicShopAPI.Models
         public int UserId { get; set; }
 
         [Required]
-        public string FullName { get; set; }
+        public string FullName { get; set; } = string.Empty;
 
         [Required]
         public string MobileNumber { get; set; }
@@ -25,7 +25,16 @@ namespace EpicShopAPI.Models
         [Required]
         public string Password { get; set; }
 
-        public virtual RoleModel RoleModel { get; set; }
+        public byte[] PasswordHash { get; set; }
+        public byte[] PasswordSalt { get; set; }
+
+        public string RefreshToken { get; set; } = string.Empty;
+        public DateTime TokenCreated { get; set; }
+        public DateTime TokenExpires { get; set; }
+
+        [Required]
+        public string Role { get; set; }
+
 
     }
 }

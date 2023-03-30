@@ -1,5 +1,7 @@
 ﻿using EpicShopAPI.Data;
+using Microsoft.Azure.Documents;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace EpicShopAPI.Models.DAL
 {
@@ -43,6 +45,12 @@ namespace EpicShopAPI.Models.DAL
             _dbSet.Remove(entity);
             await _dbContext.SaveChangesAsync();
         }
+        public async Task<T> Get(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbContext.Set<T>().FirstOrDefaultAsync(predicate);
+        }
+
+
     }
 
 }

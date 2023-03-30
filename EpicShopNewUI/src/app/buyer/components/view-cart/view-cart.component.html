@@ -21,17 +21,17 @@
           <td>{{ item.price }}</td>
           <td>{{ item.quantity }}</td>
           <td>{{ item.totalAmount }}</td>
-          <td><button (click)="removeFromCart(item.cartId)">Remove</button></td>
+          <td><button class="btn btn-danger" (click)="removeFromCart(item.cartId)">Remove</button></td>
         </tr>
         <tr>
-            <button (click)="goToBuyerProductList()">Add More Products</button>
+            <button class="btn btn-info" (click)="goToBuyerProductList()">Add More Products</button>
         </tr>
       </tbody>
       <tfoot>
         <tr>
           <td colspan="3"><b>Grand Total:</b></td>
           <td>{{ grandTotal }}</td>
-          <td></td>
+          <td><button class="btn btn-success" (click)="checkout()">Checkout</button></td>
         </tr>
       </tfoot>
     </table>

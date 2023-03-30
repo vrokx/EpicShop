@@ -14,6 +14,8 @@ import { ViewCartComponent } from './buyer/components/view-cart/view-cart.compon
 import { WalletComponent } from './buyer/components/wallet/wallet.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NavbarUserComponent } from './buyer/components/navbar-user/navbar-user.component';
+import { PaymentModeComponent } from './buyer/components/payment-mode/payment-mode.component';
+import { OrderDetailsComponent } from './buyer/components/order-details/order-details.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,9 @@ import { NavbarUserComponent } from './buyer/components/navbar-user/navbar-user.
     BuyerProductListedComponent,
     ViewCartComponent,
     WalletComponent,
-    NavbarUserComponent
+    NavbarUserComponent,
+    PaymentModeComponent,
+    OrderDetailsComponent
   ],
   imports: [
     BrowserModule,

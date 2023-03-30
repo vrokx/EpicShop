@@ -25,5 +25,6 @@ namespace EpicShopAPI.Data
         public DbSet<UserModel> UserSet { get; set; }
 
         public DbSet<WalletModel> WalletSet { get; set; }
+
     }
 }

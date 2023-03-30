@@ -1,0 +1,13 @@
+<h1>Payment Mode</h1>
+
+<form (submit)="placeOrder(mode.value)">
+  <label>Payment Mode:</label>
+  <select #mode>
+    <option value="wallet">Wallet</option>
+    <option value="cash">Cash On Delivery</option>
+  </select>
+
+  <br><br>  <br><br>
+
+  <button type="submit">Place Order</button>
+</form>

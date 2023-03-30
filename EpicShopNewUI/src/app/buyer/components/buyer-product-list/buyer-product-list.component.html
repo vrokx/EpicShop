@@ -1,11 +1,11 @@
-<div >
+<div>
     <table>
-      <tbody >
-        <tr class="card border-secondary ms-5 mt-5 me-5" style="max-width: 20rem;display: inline-block;" *ngFor="let product of products; let last = last">
+      <tbody class="text-center">
+        <tr class="card border-secondary mt-5" style="width: 18rem;display: inline-block;margin-right: 2%;" *ngFor="let product of products; let last = last">
           <td class="card-header">{{ product.productName }}</td><br>
-          <td >{{ product.image }}</td><br>
+          <img src={{product.image}} height="200" width="200"/>
           <td class="card-text">Price : {{ product.price }}.00 RS/-</td><br>
-          <button type="submit" class="btn btn-primary mr-2" (click)="onAddToCart(product.productId, 1, cartItem)">Add to Cart</button>
+          <button type="submit" class="btn btn-primary mr-2 w-100" (click)="onAddToCart(product.productId, 1, cartItem)">Add to Cart</button>
         </tr>
       </tbody>
     </table>

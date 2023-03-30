@@ -29,6 +29,7 @@ export class ViewCartComponent {
 
   calculateGrandTotal() {
     this.grandTotal = this.cartItems.reduce((total : any , item : any) => total + item.totalAmount, 0);
+    this.cartService.grandTotal = this.grandTotal;
   }
 
   removeFromCart(cartId: number): void {
@@ -45,5 +46,9 @@ export class ViewCartComponent {
 
   goToBuyerProductList(): void {
     this.router.navigate(['/']);
+  }
+
+  checkout(): void {
+    this.router.navigate(['wallet']);
   }
 }

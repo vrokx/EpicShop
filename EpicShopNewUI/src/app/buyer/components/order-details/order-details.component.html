@@ -1,0 +1,14 @@
+<h1>Order Details</h1>
+
+<div *ngIf="order">
+  <p>Order ID: {{ order.orderId }}</p>
+  <p>Order Date: {{ order.orderDate }}</p>
+  <p>Mode of Payment: {{ order.modeOfPayment }}</p>
+  <p>Order Status: {{ order.orderStatus }}</p>
+  <p>Amount Paid: {{ order.amountPaid }}</p>
+  <button class="btn btn-primary mr-2 w-100" (click)="sendEmail(4)">Send On Mail</button>
+</div>
+
+<div *ngIf="!order">
+  <p>Loading order details...</p>
+</div>
