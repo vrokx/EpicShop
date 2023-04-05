@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { BuyerProductListService } from '../../services/buyer-product-list.service';
+import { Authservice } from 'src/app/auth/services/authservice';
 
 @Component({
   selector: 'app-view-cart',
@@ -11,8 +12,10 @@ export class ViewCartComponent {
   cartItems: any = [];
   grandTotal: number = 0;
 
-  constructor(private cartService: BuyerProductListService, private router: Router) { 
-    this.getCart();
+  constructor(private cartService: BuyerProductListService, private router: Router, private authService : Authservice) { 
+    if(this.authService.IsUserLoggedIn() == true){
+      this.getCart();
+    }
   }
 
   getCart(): void {

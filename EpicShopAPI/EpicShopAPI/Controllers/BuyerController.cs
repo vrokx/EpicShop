@@ -294,9 +294,11 @@ namespace EpicShopAPI.Controllers
         {
             try
             {
+                var loggedInUser = await _userObj.GetById(userId);
+                var userEmail = loggedInUser.Email;
                 var order = await _context.OrderSet.OrderBy(i => i.OrderId).LastOrDefaultAsync();
 
-                MailMessage mm = new MailMessage("radhakrishna36495@gmail.com", "vaibhavraval9819@gmail.com");
+                MailMessage mm = new MailMessage("radhakrishna36495@gmail.com", userEmail);
                 mm.Subject = $"Order details for your Order id : {order.OrderId}";
                 mm.Body = $"Order id : {order.OrderId},\n Order Date : {order.OrderDate},\n Amount Paid : {order.AmountPaid},\n Mode Of Payment : {order.ModeOfPayment},\n Order Status : {order.OrderStatus}";
                 mm.IsBodyHtml = false;
@@ -323,6 +325,21 @@ namespace EpicShopAPI.Controllers
                 return StatusCode(500, $"An error occurred while placing order: {innerExceptionMessage}");
             }
         }
+
+        //[HttpPost("Search")]
+        //public ActionResult Search(string searchString)
+        //{
+        //    try
+        //    {
+        //        var det = _context.ProductSet.Where(d => d.ProductName.ToUpper().Contains(searchString.ToUpper())).ToList();
+
+        //        return Ok(det);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Ok(ex.Message);
+        //    }
+        //}
 
     }
 }

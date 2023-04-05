@@ -20,6 +20,7 @@ export class BuyerProductListedComponent {
    }
 
   getAllProducts(): void {
+    
     this.cartService.getAllProducts().subscribe((products: Products[]) => {
       this.products = products;
       console.log(products);
@@ -34,5 +35,9 @@ export class BuyerProductListedComponent {
         alert('Error adding product to cart');
         console.error(error);
       });
+  }
+
+  viewcart(){
+    this.router.navigate(["/view-cart"]);
   }
 }

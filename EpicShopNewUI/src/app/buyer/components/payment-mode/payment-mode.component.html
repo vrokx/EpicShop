@@ -1,13 +1,17 @@
-<h1>Payment Mode</h1>
+<div class="mt-5 text-center d-flex justify-content-center align=-items-sm-center h-100">
+<div class="border-secondary p-4">
+  <h1 class="card-header">Payment Mode</h1>
 
-<form (submit)="placeOrder(mode.value)">
-  <label>Payment Mode:</label>
-  <select #mode>
+<form class="mt-4" (submit)="placeOrder(mode.value)">
+  <label class="form-lable">Payment Mode:</label><br><br>
+  <select class="form-select" #mode>
     <option value="wallet">Wallet</option>
     <option value="cash">Cash On Delivery</option>
   </select>
 
-  <br><br>  <br><br>
+  <br><br>
 
-  <button type="submit">Place Order</button>
+  <button type="submit" class="btn btn-primary">Place Order</button>
 </form>
+</div>
+</div>

@@ -16,6 +16,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NavbarUserComponent } from './buyer/components/navbar-user/navbar-user.component';
 import { PaymentModeComponent } from './buyer/components/payment-mode/payment-mode.component';
 import { OrderDetailsComponent } from './buyer/components/order-details/order-details.component';
+import { RegistrationComponent } from './auth/components/registration/registration.component';
+import { Authservice } from './Auth/services/authservice';
+import { LoginComponent } from './auth/components/login/login.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +32,9 @@ import { OrderDetailsComponent } from './buyer/components/order-details/order-de
     WalletComponent,
     NavbarUserComponent,
     PaymentModeComponent,
-    OrderDetailsComponent
+    OrderDetailsComponent,
+    RegistrationComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -39,7 +44,8 @@ import { OrderDetailsComponent } from './buyer/components/order-details/order-de
     ReactiveFormsModule
   ],
   providers: [
-    ProductListService
+    ProductListService,
+    Authservice
   ],
   bootstrap: [AppComponent]
 })

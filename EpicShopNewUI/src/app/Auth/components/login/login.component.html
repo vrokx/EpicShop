@@ -1,0 +1,74 @@
+
+    <section class="mt-4">
+    <div class="">
+      <div class="row gx-lg-5 align-items-center mb-5">
+  
+       <div class="border-radius: 20% position-relative">
+          <div id="radius-shape-1" class="position-absolute rounded-circle shadow-5-strong"></div>
+          <div id="radius-shape-2" class="position-absolute shadow-5-strong"></div>
+  
+          <div class="card bg-glass" style="margin-left: 400px; margin-right: 400px; padding-left: 40px; padding-right: 40px;">
+            <div class="card-body">
+              <form [formGroup]="LoginRail" (ngSubmit)="LoginSubmitted()">
+                <div>
+  
+  
+  
+                  <h3 class="text-center fw-bold">Login</h3>
+  
+                  <br>
+                  <div class="form-outline">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="text" formControlName="email"
+                      [class.is-invalid]="f['email'].invalid && f['email'].touched"
+                      class="form-control form-control-md" />
+                    
+                  </div>
+  
+  
+                  <div class="form-text text-danger" *ngIf="f['email'].invalid && f['email'].touched">
+                    <div
+                      *ngIf="f['email'].errors && f['email'].errors['required'] && (f['email'].dirty || f['email'].touched)">
+                      Email Is Required
+                    </div>
+  
+                  </div>
+                  <br>
+  
+  
+  
+                  <div class="form-outline">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" formControlName="password"
+                      [class.is-invalid]="f['password'].invalid && f['password'].touched"
+                      class="form-control form-control-md" />
+                    
+                  </div>
+  
+                  <div class="form-text text-danger" *ngIf="f['password'].invalid && f['password'].touched">
+                    <div *ngIf="f['password'].errors && f['password'].errors['required']">
+                      Password Is Required
+                    </div>
+                  </div>
+  
+                </div>
+                <br>
+                <br>
+  
+                <div class="col-lg-8" style="margin-left: 75px;">
+                  <div class="d-grid">
+                    <input type="submit" value="Login" [class.disabled]="LoginRail.invalid" class="btn btn-primary">
+                  </div>
+                </div>
+                <br>
+                <div class="text-center">
+                  <a routerLink="/registration">Register</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+

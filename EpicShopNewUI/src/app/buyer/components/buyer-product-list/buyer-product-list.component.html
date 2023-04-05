@@ -2,7 +2,7 @@
     <table>
       <tbody class="text-center">
         <tr class="card border-secondary mt-5" style="width: 18rem;display: inline-block;margin-right: 2%;" *ngFor="let product of products; let last = last">
-          <td class="card-header">{{ product.productName }}</td><br>
+          <td class="card-header bg-white border-0">{{ product.productName }}</td><br>
           <img src={{product.image}} height="200" width="200"/>
           <td class="card-text">Price : {{ product.price }}.00 RS/-</td><br>
           <button type="submit" class="btn btn-primary mr-2 w-100" (click)="onAddToCart(product.productId, 1, cartItem)">Add to Cart</button>

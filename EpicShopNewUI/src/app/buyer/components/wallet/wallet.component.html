@@ -1,7 +1,8 @@
-<h2>My Wallet</h2>
-<div *ngIf="wallet">
+<div class="mt-5  d-flex justify-content-center align=-items-sm-center h-100">
+<div *ngIf="wallet" class="border-secondary p-4">
+  <h2 class="card-header text-center">My Wallet</h2>
 <p>Current balance: {{ wallet.currentBalance }}</p>
-
+<div>
 <form [formGroup]="addBalanceForm" (ngSubmit)="addBalance()">
   <div class="form-group">
     <label for="amount">Amount:</label>
@@ -14,7 +15,9 @@
     </div>
   </div>
 
-  <button class="btn btn-primary" type="submit">Add Balance</button>
-  <button class="btn btn-success" (click)="buyNow()">Buy Now</button>
+  <button class="btn btn-primary me-2 mt-2" type="submit">Add Balance</button>
+  <button class="btn btn-success mt-2" (click)="buyNow()">Buy Now</button>
 </form>
+</div>
+</div>
 </div>

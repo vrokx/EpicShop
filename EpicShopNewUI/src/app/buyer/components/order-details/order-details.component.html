@@ -1,5 +1,7 @@
-<h1>Order Details</h1>
-
+<div class="mt-5 text-center d-flex justify-content-center align=-items-sm-center h-100">
+<div class="border-secondary p-4">
+<h1 class="card-header">Order Details</h1>
+<br>
 <div *ngIf="order">
   <p>Order ID: {{ order.orderId }}</p>
   <p>Order Date: {{ order.orderDate }}</p>
@@ -11,4 +13,6 @@
 
 <div *ngIf="!order">
   <p>Loading order details...</p>
+</div>
+</div>
 </div>

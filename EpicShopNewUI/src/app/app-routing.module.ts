@@ -9,17 +9,23 @@ import { ViewCartComponent } from './buyer/components/view-cart/view-cart.compon
 import { WalletComponent } from './buyer/components/wallet/wallet.component';
 import { PaymentModeComponent } from './buyer/components/payment-mode/payment-mode.component';
 import { OrderDetailsComponent } from './buyer/components/order-details/order-details.component';
+import { RegistrationComponent } from './auth/components/registration/registration.component';
+import { LoginComponent } from './auth/components/login/login.component';
+import { AuthGuard } from './Auth/services/auth.guard';
+import { NavbarUserComponent } from './buyer/components/navbar-user/navbar-user.component';
 
 const routes: Routes = [
   {path : '', component: BuyerProductListedComponent},
-  {path : 'view-cart', component: ViewCartComponent},
-  {path : 'wallet', component: WalletComponent},
-  {path : 'paymentMode', component: PaymentModeComponent},
-  {path : 'orderDetails', component: OrderDetailsComponent},
-  {path: 'seller/product-list', component: ProductListComponent },
-  {path : 'update-product/:id', component: UpdateProductComponent},
-  {path : 'delete-product/:id', component: DeleteProductComponent},
-  {path : 'add-product', component: AddProductComponent}
+  {path : 'view-cart', component: ViewCartComponent,canActivate:[AuthGuard]},
+  {path : 'wallet', component: WalletComponent,canActivate:[AuthGuard]},
+  {path : 'paymentMode', component: PaymentModeComponent,canActivate:[AuthGuard]},
+  {path : 'orderDetails', component: OrderDetailsComponent,canActivate:[AuthGuard]},
+  {path: 'seller/product-list', component: ProductListComponent,canActivate:[AuthGuard] },
+  {path : 'update-product/:id', component: UpdateProductComponent,canActivate:[AuthGuard]},
+  {path : 'delete-product/:id', component: DeleteProductComponent,canActivate:[AuthGuard]},
+  {path : 'add-product', component: AddProductComponent,canActivate:[AuthGuard]},
+  {path : 'registration', component: RegistrationComponent},
+  {path : 'login', component: LoginComponent}
 ];
 
 @NgModule({

@@ -1,0 +1,233 @@
+<p
+  class="text-center fs-3"
+  [ngClass]="isAccountCreated ? 'text-success pb-1' : 'text-danger pb-1'"
+>
+  {{ displayMsg }}
+</p>
+
+<div class="d-flex justify-content-center align=-items-sm-center h-100 mb-2">
+  <form
+    [formGroup]="regitserForm"
+    (ngSubmit)="registerSubmited()"
+    class="border-secondary p-4"
+  >
+    <div class="row g-0">
+      <div class="card-header text-center">
+        <span class="fs-3">Register</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col">
+        <label for="fullName" class="form-label mt-4">Full Name : </label>
+        <input
+          type="text"
+          class="form-control"
+          id="fullName"
+          formControlName="fullName"
+          placeholder="Enter Your Name"
+        />
+        <div
+          class="form-text text-danger"
+          *ngIf="FullName.errors?.['required'] && (FullName.touched || FullName.dirty)"
+        >
+          Name is Required
+        </div>
+        <div
+          class="form-text text-danger"
+          *ngIf="FullName.errors?.['minlength'] && (FullName.touched || FullName.dirty)"
+        >
+          Name is Too Short
+        </div>
+        <div
+          class="form-text text-danger"
+          *ngIf="FullName.errors?.['pattern'] && (FullName.touched || FullName.dirty)"
+        >
+          Name Should Start With Alphabate
+        </div>
+      </div>
+      <div class="form-group col">
+        <label for="mobNumber" class="form-label mt-4">Mobile Number : </label>
+        <input
+          type="text"
+          class="form-control"
+          id="mobNumber"
+          formControlName="mobNumber"
+          placeholder="Enter Your Mobile Number"
+        />
+        <div
+          class="form-text text-danger"
+          *ngIf="MobNumber.errors?.['required'] && (MobNumber.touched || MobNumber.dirty)"
+        >
+          Mobile Number is Required
+        </div>
+        <div
+          class="form-text text-danger"
+          *ngIf="MobNumber.errors?.['minlength'] && (MobNumber.touched || MobNumber.dirty)"
+        >
+          Mobile Number is too Short
+        </div>
+        <div
+          class="form-text text-danger"
+          *ngIf="MobNumber.errors?.['maxlength'] && (MobNumber.touched || MobNumber.dirty)"
+        >
+          Mobile Number is too Long
+        </div>
+        <div
+          class="form-text text-danger"
+          *ngIf="MobNumber.errors?.['pattern'] && (MobNumber.touched || MobNumber.dirty)"
+        >
+          Enter Number's Only
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <fieldset class="form-group col">
+        <label class="form-label mt-4">Gender : </label><br />
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="gender"
+            id="gender"
+            formControlName="gender"
+            value="male"
+            checked=""
+          />
+          <div
+            class="form-text text-danger"
+            *ngIf="Gender.errors?.['required'] && (Gender.touched || Gender.dirty)"
+          >
+            Gender is Required
+          </div>
+          <label class="form-check-label" for="gender"> Male </label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="gender"
+            id="gender"
+            formControlName="gender"
+            value="female"
+          />
+          <div
+            class="form-text text-danger"
+            *ngIf="Gender.errors?.['required'] && (Gender.touched || Gender.dirty)"
+          >
+            Gender is Required
+          </div>
+          <label class="form-check-label" for="gender"> Female </label>
+        </div>
+      </fieldset>
+    </div>
+    <div class="row">
+      <div class="form-group col">
+        <label for="email" class="form-label mt-4">Email : </label>
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          formControlName="email"
+          placeholder="Enter email"
+        />
+        <div
+          class="form-text text-danger"
+          *ngIf="Email.errors?.['required'] && (Email.touched || Email.dirty)"
+        >
+          Email is Required
+        </div>
+        <div
+          class="form-text text-danger"
+          *ngIf="Email.errors?.['email'] && (Email.touched || Email.dirty)"
+        >
+          Name is Invalid
+        </div>
+      </div>
+      <div class="form-group col">
+        <label for="psd" class="form-label mt-4">Password : </label>
+        <input
+          type="password"
+          class="form-control"
+          id="psd"
+          formControlName="psd"
+          placeholder="Enter Password"
+        />
+        <div
+          class="form-text text-danger"
+          *ngIf="Psd.errors?.['required'] && (Psd.touched || Psd.dirty)"
+        >
+          Password is Required
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <fieldset class="form-group col">
+        <label class="form-label mt-4">Role : </label><br />
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="role"
+            formControlName="role"
+            id="role"
+            value="buyer"
+            checked=""
+          />
+          <div
+            class="form-text text-danger"
+            *ngIf="Role.errors?.['required'] && (Role.touched || Role.dirty)"
+          >
+            Role is Required
+          </div>
+          <label class="form-check-label" for="role"> Buyer </label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="role"
+            formControlName="role"
+            id="role"
+            value="seller"
+          />
+          <div
+            class="form-text text-danger"
+            *ngIf="Role.errors?.['required'] && (Role.touched || Role.dirty)"
+          >
+            Role is Required
+          </div>
+          <label class="form-check-label" for="role"> Seller </label>
+        </div>
+      </fieldset>
+      <div class="form-group col">
+        <label for="rpsd" class="form-label mt-4">Confirm Password : </label>
+        <input
+          type="password"
+          class="form-control"
+          id="rpsd"
+          formControlName="rpsd"
+          placeholder="Enter Password Again"
+        />
+        <div
+          class="form-text text-danger"
+          *ngIf="Rpsd.errors?.['required'] && (Rpsd.touched || Rpsd.dirty)"
+        >
+          Confirm Password is Required
+        </div>
+        <div class="form-text text-danger" [ngStyle]="{ display: repeatPass }">
+          Confirm Pass is Invalid.
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="form-group">
+          <input
+            type="submit"
+            [disabled]="regitserForm.invalid"
+            class="btn btn-primary"
+            style="width: 105%"
+          />
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
