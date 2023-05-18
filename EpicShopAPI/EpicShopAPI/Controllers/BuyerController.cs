@@ -19,14 +19,16 @@ namespace EpicShopAPI.Controllers
         private readonly IAllRepo<ProductModel> _productObj;
         private readonly IAllRepo<UserModel> _userObj;
         private readonly IAllRepo<CartModel> _cartObj;
+        private readonly IProduct product1;
 
-        public BuyerController(IAllRepo<ProductModel> productObj, IAllRepo<UserModel> userObj, IAllRepo<CartModel> cartObj, ILogger<BuyerController> logger, EpicShopApiDBContext context)
+        public BuyerController(IAllRepo<ProductModel> productObj, IAllRepo<UserModel> userObj, IAllRepo<CartModel> cartObj, ILogger<BuyerController> logger, EpicShopApiDBContext context, IProduct product)
         {
             this._productObj = productObj;
             this._userObj = userObj;
             this._cartObj = cartObj;
             _logger = logger;
             _context = context;
+            product1 = product;
         }
 
         [HttpGet("BuyerDisplayAllProduct")]
@@ -324,6 +326,13 @@ namespace EpicShopAPI.Controllers
 
                 return StatusCode(500, $"An error occurred while placing order: {innerExceptionMessage}");
             }
+        }
+
+        [HttpGet("GetAllProductsSp")]
+        public async Task<IActionResult> GetAllProductsSp()
+        {
+            var allProducts = await product1.GetAllProductsSp();
+            return Ok(allProducts);
         }
 
         //[HttpPost("Search")]

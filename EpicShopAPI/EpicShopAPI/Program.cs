@@ -26,6 +26,9 @@ builder.Services.AddScoped<EpicShopApiDBContext>(provider => {
     var options = provider.GetService<DbContextOptions<EpicShopApiDBContext>>();
     return new EpicShopApiDBContext(options);
 });
+builder.Services.AddScoped<IProduct, Product>();
+
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
